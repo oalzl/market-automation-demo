@@ -1,0 +1,17 @@
+{
+  "credentials": {
+    "valid": {
+      "username": "bod@example.com",
+      "password": "10203040"
+    }
+  },
+  "logout_menu_item": "//android.widget.TextView[@content-desc='Logout Menu Item']",
+  "username_empty": {
+    "text": "//android.widget.TextView[@resource-id='com.saucelabs.mydemoapp.android:id/nameErrorTV']",
+    "icon": "//android.widget.ImageView[@resource-id='com.saucelabs.mydemoapp.android:id/usernameErrorIV']"
+  },
+  "password_empty": {
+    "text": "//android.widget.TextView[@resource-id='com.saucelabs.mydemoapp.android:id/passwordErrorTV']",
+    "icon": "//android.widget.ImageView[@resource-id='com.saucelabs.mydemoapp.android:id/passwordErrorIV']"
+  }
+}

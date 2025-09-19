@@ -1,0 +1,10 @@
+{
+  "header": "//android.view.ViewGroup[@resource-id='com.saucelabs.mydemoapp.android:id/header']",
+  "login_page_title": "//android.widget.TextView[@resource-id='com.saucelabs.mydemoapp.android:id/loginTV']",
+  "login_guide_text": "//android.widget.TextView[@resource-id='com.saucelabs.mydemoapp.android:id/selectTextTV']",
+  "username_label": "//android.widget.TextView[@resource-id='com.saucelabs.mydemoapp.android:id/usernameTV']",
+  "username_input": "//android.widget.EditText[@resource-id='com.saucelabs.mydemoapp.android:id/nameET']",
+  "password_label": "//android.widget.TextView[@resource-id='com.saucelabs.mydemoapp.android:id/passwordTV']",
+  "password_input": "//android.widget.EditText[@resource-id='com.saucelabs.mydemoapp.android:id/passwordET']",
+  "login_button": "//android.widget.Button[@content-desc='Tap to login with given credentials']"
+}

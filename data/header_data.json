@@ -1,0 +1,4 @@
+{
+  "menu_button": "//android.widget.ImageView[@content-desc='View menu']",
+  "login_menu_item": "//android.widget.TextView[@content-desc='Login Menu Item']"
+}
