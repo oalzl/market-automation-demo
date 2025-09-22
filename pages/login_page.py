@@ -1,5 +1,6 @@
 from pages.base_method import BaseMethod
 from data.json_loader import load_json
+from selenium.webdriver.support.ui import WebDriverWait
 
 class LoginPage(BaseMethod):
     def __init__(self, driver):
@@ -27,3 +28,11 @@ class LoginPage(BaseMethod):
             return self.is_element_visible_by_xpath(val.get("text")) and \
                    self.is_element_visible_by_xpath(val.get("icon"))
         return self.is_element_visible_by_xpath(val)
+
+def go_to_login_page(driver, main):
+    """GNB 메뉴 클릭 후 로그인 페이지 진입 및 로딩 완료 대기"""
+    # GNB 메뉴 버튼 존재 확인
+    WebDriverWait(driver, 10).until(lambda d: main.header.is_element_visible("menu_button"))
+    main.open_login_menu()  # main_page에 있는 메뉴 클릭 함수 사용
+    # 로그인 페이지 타이틀 로딩 확인
+    WebDriverWait(driver, 10).until(lambda d: main.is_element_visible("login_page_title"))
