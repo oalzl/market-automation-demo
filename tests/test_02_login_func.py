@@ -1,88 +1,57 @@
-import time
 import pytest
-from pages.main_page import MainPage
-from pages.login_page import LoginPage
+from pages.login_page import go_to_login_page
 from tests.conftest import logger
-from data.json_loader import load_json
 
-func_data = load_json("login_func_data.json")
+def check_login_func_case(driver, main, login, case_id):
+    # ✅ 사전 조건: 로그인 페이지 진입
+    go_to_login_page(driver, main)
 
-# -----------------------
-# 로그인 기능 테스트
-# -----------------------
-@pytest.mark.parametrize(
-    "username,password,expected_key,desc",
-    [
-        (
-            func_data["credentials"]["valid"]["username"],
-            func_data["credentials"]["valid"]["password"],
-            "logout_menu_item",
-            "로그인 성공",
-        ),
-        (
-            "",
-            func_data["credentials"]["valid"]["password"],
-            "username_empty",
-            "username 미입력",
-        ),
-        (
-            func_data["credentials"]["valid"]["username"],
-            "",
-            "password_empty",
-            "password 미입력",
-        ),
-    ],
-)
-def test_login_function(driver, username, password, expected_key, desc):
-    logger.info(f"🟡 로그인 기능 테스트 시작 : {desc} 🟡")
+    # valid credential 가져오기
+    valid_username = login.locators["credentials"]["valid"]["username"]
+    valid_password = login.locators["credentials"]["valid"]["password"]
 
-    # -----------------------
-    # 앱 메인 진입 + 로그인 메뉴
-    # -----------------------
-    logger.info("➡️ GNB 메뉴 확인 시작")
-    main = MainPage(driver)
-    assert main.header.is_element_visible("menu_button"), "GNB 메뉴 버튼이 화면에 나타나지 않음"
-    logger.info("✅  GNB 메뉴 확인 완료")
+    if case_id == 12:
+        logger.info("🟡 케이스 12: 로그인 완료 확인 🟡")
 
-    logger.info("➡️ 로그인 메뉴 클릭 시작")
-    main.open_login_menu()
-    logger.info("✅  로그인 메뉴 클릭 완료")
+        # Username / Password 필드 확인 및 입력
+        assert login.is_element_visible("username_input"), "Username 입력 필드 노출 실패"
+        login.input_text("username_input", valid_username)
+        assert login.is_element_visible("password_input"), "Password 입력 필드 노출 실패"
+        login.input_text("password_input", valid_password)
 
-    # -----------------------
-    # LoginPage에서 입력/클릭
-    # -----------------------
-    login = LoginPage(driver)
+        login.click_login()
+        logger.info("✅  로그인 버튼 클릭 완료")
 
-    if username:
-        logger.info("➡️ Username 입력 시작")
-        login.input_text("username_input", username)
-        logger.info("✅  Username 입력 완료")
-
-    if password:
-        logger.info("➡️ Password 입력 시작")
-        login.input_text("password_input", password)
-        logger.info("✅  Password 입력 완료")
-
-    logger.info("➡️ 로그인 버튼 클릭 시작")
-    login.click_login()
-    time.sleep(1)  # 로그인 처리 대기
-    logger.info("✅  로그인 버튼 클릭 완료")
-
-    # -----------------------
-    # 결과 확인
-    # -----------------------
-    logger.info(f"➡️ '{desc}' 결과 확인 시작")
-    if desc == "로그인 성공":
-        logger.info("➡️ GNB 메뉴 열기 시작 (로그인 성공 확인용)")
+        # 헤더 메뉴 버튼 나타날 때까지 기다렸다가 클릭
+        assert main.header.is_element_visible("menu_button"), "헤더 메뉴 버튼 노출 실패"
         main.header.click_menu()
-        logger.info("✅  GNB 메뉴 열기 완료")
 
-        logger.info("➡️ 로그아웃 메뉴 확인 시작")
-        assert main.header.is_logout_visible(), f"{desc} 검증 실패"
-        logger.info("✅  로그아웃 메뉴 확인 완료")
+        # 로그아웃 메뉴 노출 확인
+        assert main.header.is_logout_visible(), "로그인 완료 후 로그아웃 메뉴가 보이지 않음"
+
+    elif case_id == 13:
+        logger.info("🟡 케이스 13: Username 미입력 시 오류 확인 🟡")
+
+        # Username 미입력 / Password는 valid 사용
+        login.input_text("username_input", "")
+        login.input_text("password_input", valid_password)
+        login.click_login()
+
+        # 오류 메시지 확인
+        assert login.check_result("username_empty"), "Username 미입력 오류 메시지 확인 실패"
+
+    elif case_id == 14:
+        logger.info("🟡 케이스 14: Password 미입력 시 오류 확인 🟡")
+
+        # Username은 valid 사용 / Password 미입력
+        login.input_text("username_input", valid_username)
+        login.input_text("password_input", "")
+        login.click_login()
+
+        # 오류 메시지 확인
+        assert login.check_result("password_empty"), "Password 미입력 오류 메시지 확인 실패"
+
     else:
-        logger.info("➡️ 오류 메시지 확인 시작")
-        assert login.check_result(expected_key), f"{desc} 검증 실패"
-        logger.info("✅  오류 메시지 확인 완료")
+        logger.warning(f"⚠️ 정의되지 않은 케이스 ID: {case_id}")
 
-    logger.info(f"🟡 로그인 기능 테스트 확인 완료 : {desc} 🟡")
+    logger.info(f"✅  케이스 {case_id} 기능 테스트 완료")
